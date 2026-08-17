@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="theme-color" content="#141210">
+<title>Mashabrum Poultry</title>
+
+<style>
+*{box-sizing:border-box}
+body{
+ margin:0;background:#141210;color:#eee6d5;
+ font-family:Arial,sans-serif;padding-bottom:80px
+}
+header{
+ background:#211c18;padding:18px 15px;
+ position:sticky;top:0;z-index:5;
+ border-bottom:1px solid #3b3025
+}
+header h1{margin:0;color:#d4a72c;font-size:23px}
+header small{color:#aaa}
+nav{
+ display:flex;overflow:auto;background:#1c1815;
+ position:sticky;top:67px;z-index:4
+}
+nav button{
+ border:0;background:none;color:#aaa;padding:14px 16px;
+ white-space:nowrap;font-size:14px
+}
+nav button.active{color:#d4a72c;border-bottom:2px solid #d4a72c}
+.page{display:none;padding:15px}
+.page.active{display:block}
+.cards{
+ display:grid;grid-template-columns:1fr 1fr;gap:10px
+}
+.card{
+ background:#211c18;border:1px solid #332b23;
+ border-radius:14px;padding:16px
+}
+.card b{font-size:22px;color:#d4a72c}
+.card small{display:block;color:#aaa;margin-bottom:8px}
+input,select,textarea{
+ width:100%;padding:13px;margin:6px 0 10px;
+ border-radius:9px;border:1px solid #44382d;
+ background:#1b1714;color:#eee;font-size:15px
+}
+button{
+ cursor:pointer;border:0;border-radius:9px;
+ padding:12px 15px;font-weight:bold
+}
+.primary{background:#d4a72c;color:#17120d}
+.danger{background:#9e3926;color:white}
+.secondary{background:#39312a;color:white}
+.full{width:100%}
+.row{display:flex;gap:8px}
+.row>*{flex:1}
+.box{
+ background:#211c18;border:1px solid #332b23;
+ padding:15px;border-radius:14px;margin-bottom:14px
+}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{padding:10px 5px;border-bottom:1px solid #393029;text-align:left}
+th{color:#d4a72c}
+h2{font-size:19px}
+.total{
+ font-size:28px;color:#d4a72c;font-weight:bold;
+ text-align:center;padding:10px
+}
+.item{
+ display:flex;justify-content:space-between;gap:10px;
+ padding:12px 0;border-bottom:1px solid #393029
+}
+.item button{padding:7px 10px}
+.empty{text-align:center;color:#777;padding:25px}
+footer{
+ position:fixed;bottom:0;left:0;right:0;
+ background:#211c18;border-top:1px solid #3b3025;
+ text-align:center;padding:10px;color:#777;font-size:12px
+}
+@media print{
+ body{background:white;color:black}
+ header,nav,footer,.no-print{display:none!important}
+ .page{display:none}
+ #billPage{display:block!important}
+ .box{border:0}
+}
+</style>
+</head>
+
+<body>
+
+<header>
+<h1>🐔 Mashabrum Poultry</h1>
+<small>Business Manager — Skardu</small>
+</header>
+
+<nav>
+<button class="active" onclick="showPage('home',this)">Home</button>
+<button onclick="showPage('products',this)">Products</button>
+<button onclick="showPage('sales',this)">Sale</button>
+<button onclick="showPage('expenses',this)">Expense</button>
+<button onclick="showPage('billPage',this)">Bill</button>
+</nav>
+
+<!-- HOME -->
+<section id="home" class="page active">
+<h2>📊 Dashboard</h2>
+
+<div class="cards">
+<div class="card">
+<small>Today's Sales</small>
+<b id="todaySales">Rs 0</b>
+</div>
+
+<div class="card">
+<small>Today's Expenses</small>
+<b id="todayExpense">Rs 0</b>
+</div>
+
+<div class="card">
+<small>Total Sales</small>
+<b id="allSales">Rs 0</b>
+</div>
+
+<div class="card">
+<small>Total Expenses</small>
+<b id="allExpense">Rs 0</b>
+</div>
+</div>
+
+<div class="box">
+<h2>💰 Current Profit</h2>
+<div class="total" id="profit">Rs 0</div>
+</div>
+
+<div class="box">
+<h2>Quick Actions</h2>
+<div class="row">
+<button class="primary" onclick="showPage('sales')">➕ Sale</button>
+<button class="secondary" onclick="showPage('products')">📦 Products</button>
+</div>
+<br>
+<div class="row">
+<button class="secondary" onclick="showPage('expenses')">💸 Expense</button>
+<button class="primary" onclick="showPage('billPage')">🧾 Bill</button>
+</div>
+</div>
+
+<div class="box">
+<h2>📱 App Data</h2>
+<button class="secondary full" onclick="backup()">Download Backup</button>
+<br><br>
+<button class="danger full" onclick="clearData()">Delete All Data</button>
+</div>
+</section>
+
+
+<!-- PRODUCTS -->
+<section id="products" class="page">
+<h2>📦 Products</h2>
+
+<div class="box">
+<input id="pname" placeholder="Product name e.g. Chicken">
+<div class="row">
+<input id="pprice" type="number" placeholder="Sale price">
+<input id="pstock" type="number" placeholder="Stock">
+</div>
+<button class="primary full" onclick="addProduct()">Add Product</button>
+</div>
+
+<div class="box">
+<div id="productList"></div>
+</div>
+</section>
+
+
+<!-- SALES -->
+<section id="sales" class="page">
+<h2>🛒 New Sale</h2>
+
+<div class="box">
+<select id="saleProduct"></select>
+
+<div class="row">
+<input id="saleQty" type="number" placeholder="Quantity" value="1">
+<input id="salePrice" type="number" placeholder="Price">
+</div>
+
+<input id="customer" placeholder="Customer name">
+
+<button class="primary full" onclick="addSale()">Save Sale</button>
+</div>
+
+<div class="box">
+<h2>Recent Sales</h2>
+<div id="salesList"></div>
+</div>
+</section>
+
+
+<!-- EXPENSE -->
+<section id="expenses" class="page">
+<h2>💸 Expense</h2>
+
+<div class="box">
+<input id="expenseName" placeholder="Expense e.g. Feed">
+<input id="expenseAmount" type="number" placeholder="Amount">
+<button class="primary full" onclick="addExpense()">Save Expense</button>
+</div>
+
+<div class="box">
+<div id="expenseList"></div>
+</div>
+</section>
+
+
+<!-- BILL -->
+<section id="billPage" class="page">
+<div class="box">
+
+<div class="no-print">
+<h2>🧾 Create Bill</h2>
+
+<input id="billCustomer" placeholder="Customer name">
+
+<select id="billProduct"></select>
+
+<div class="row">
+<input id="billQty" type="number" value="1" placeholder="Quantity">
+<input id="billPrice" type="number" placeholder="Price">
+</div>
+
+<button class="primary full" onclick="addBillItem()">Add Item</button>
+
+<br><br>
+</div>
+
+<h2 style="text-align:center">MASHABRUM POULTRY</h2>
+<p style="text-align:center">Skardu</p>
+<hr>
+
+<p><b>Customer:</b> <span id="billCustomerShow">Walk-in Customer</span></p>
+
+<table>
+<thead>
+<tr>
+<th>Item</th>
+<th>Qty</th>
+<th>Price</th>
+<th>Total</th>
+</tr>
+</thead>
+<tbody id="billItems"></tbody>
+</table>
+
+<div class="total" id="billTotal">Rs 0</div>
+
+<div class="no-print">
+<button class="primary full" onclick="printBill()">🖨️ Print Bill</button>
+<br><br>
+<button class="danger full" onclick="clearBill()">Clear Bill</button>
+</div>
+
+</div>
+</section>
+
+
+<footer>
+Mashabrum Poultry Shop • Skardu
+</footer>
+
+
+<script>
+let products=JSON.parse(localStorage.getItem("mp_products")||"[]");
+let sales=JSON.parse(localStorage.getItem("mp_sales")||"[]");
+let expenses=JSON.parse(localStorage.getItem("mp_expenses")||"[]");
+let bill=JSON.parse(localStorage.getItem("mp_bill")||"[]");
+
+function money(n){
+ return "Rs "+Number(n||0).toLocaleString();
+}
+
+function save(){
+ localStorage.setItem("mp_products",JSON.stringify(products));
+ localStorage.setItem("mp_sales",JSON.stringify(sales));
+ localStorage.setItem("mp_expenses",JSON.stringify(expenses));
+ localStorage.setItem("mp_bill",JSON.stringify(bill));
+}
+
+function showPage(id,btn){
+ document.querySelectorAll(".page").forEach(x=>x.classList.remove("active"));
+ document.getElementById(id).classList.add("active");
+
+ document.querySelectorAll("nav button").forEach(x=>x.classList.remove("active"));
+ if(btn)btn.classList.add("active");
+
+ render();
+}
+
+function addProduct(){
+ let name=document.getElementById("pname").value.trim();
+ let price=Number(document.getElementById("pprice").value);
+ let stock=Number(document.getElementById("pstock").value);
+
+ if(!name||!price){
+  alert("Product name aur price likhein");
+  return;
+ }
+
+ products.push({
+  id:Date.now(),
+  name,
+  price,
+  stock
+ });
+
+ save();
+
+ document.getElementById("pname").value="";
+ document.getElementById("pprice").value="";
+ document.getElementById("pstock").value="";
+
+ render();
+ alert("Product added successfully");
+}
+
+function deleteProduct(id){
+ if(confirm("Delete this product?")){
+  products=products.filter(p=>p.id!==id);
+  save();
+  render();
+ }
+}
+
+function renderProducts(){
+ let box=document.getElementById("productList");
+
+ if(!products.length){
+  box.innerHTML='<div class="empty">No products added</div>';
+ }else{
+  box.innerHTML=products.map(p=>`
+  <div class="item">
+   <div>
+    <b>${escapeHtml(p.name)}</b><br>
+    <small>${money(p.price)} • Stock: ${p.stock}</small>
+   </div>
+   <button class="danger" onclick="deleteProduct(${p.id})">Delete</button>
+  </div>
+  `).join("");
+ }
+
+ let options='<option value="">Select product</option>'+
+ products.map(p=>`
+ <option value="${p.id}">${escapeHtml(p.name)} — ${money(p.price)}</option>
+ `).join("");
+
+ document.getElementById("saleProduct").innerHTML=options;
+ document.getElementById("billProduct").innerHTML=options;
+}
+
+function chooseSaleProduct(){
+ let id=Number(document.getElementById("saleProduct").value);
+ let p=products.find(x=>x.id===id);
+ if(p)document.getElementById("salePrice").value=p.price;
+}
+
+document.getElementById("saleProduct").addEventListener("change",chooseSaleProduct);
+
+document.getElementById("billProduct").addEventListener("change",function(){
+ let id=Number(this.value);
+ let p=products.find(x=>x.id===id);
+ if(p)document.getElementById("billPrice").value=p.price;
+});
+
+function addSale(){
+ let id=Number(document.getElementById("saleProduct").value);
+ let qty=Number(document.getElementById("saleQty").value);
+ let price=Number(document.getElementById("salePrice").value);
+ let customer=document.getElementById("customer").value||"Walk-in Customer";
+
+ let p=products.find(x=>x.id===id);
+
+ if(!p||qty<=0||price<=0){
+  alert("Product, quantity aur price check karein");
+  return;
+ }
+
+ let total=qty*price;
+
+ sales.unshift({
+  id:Date.now(),
+  date:new Date().toISOString(),
+  product:p.name,
+  qty,
+  price,
+  total,
+  customer
+ });
+
+ p.stock-=qty;
+
+ save();
+
+ document.getElementById("customer").value="";
+ document.getElementById("saleQty").value=1;
+
+ render();
+ alert("Sale saved");
+}
+
+function deleteSale(id){
+ sales=sales.filter(x=>x.id!==id);
+ save();
+ render();
+}
+
+function renderSales(){
+ let box=document.getElementById("salesList");
+
+ if(!sales.length){
+  box.innerHTML='<div class="empty">No sales yet</div>';
+  return;
+ }
+
+ box.innerHTML=sales.slice(0,20).map(s=>`
+ <div class="item">
+  <div>
+   <b>${escapeHtml(s.product)}</b><br>
+   ${s.qty} × ${money(s.price)} = <b>${money(s.total)}</b><br>
+   <small>${escapeHtml(s.customer)} • ${new Date(s.date).toLocaleString()}</small>
+  </div>
+  <button class="danger" onclick="deleteSale(${s.id})">×</button>
+ </div>
+ `).join("");
+}
+
+function addExpense(){
+ let name=document.getElementById("expenseName").value.trim();
+ let amount=Number(document.getElementById("expenseAmount").value);
+
+ if(!name||amount<=0){
+  alert("Expense name aur amount likhein");
+  return;
+ }
+
+ expenses.unshift({
+  id:Date.now(),
+  name,
+  amount,
+  date:new Date().toISOString()
+ });
+
+ save();
+
+ document.getElementById("expenseName").value="";
+ document.getElementById("expenseAmount").value="";
+
+ render();
+ alert("Expense saved");
+}
+
+function deleteExpense(id){
+ expenses=expenses.filter(x=>x.id!==id);
+ save();
+ render();
+}
+
+function renderExpenses(){
+ let box=document.getElementById("expenseList");
+
+ if(!expenses.length){
+  box.innerHTML='<div class="empty">No expenses yet</div>';
+  return;
+ }
+
+ box.innerHTML=expenses.slice(0,30).map(e=>`
+ <div class="item">
+  <div>
+   <b>${escapeHtml(e.name)}</b><br>
+   <b>${money(e.amount)}</b><br>
+   <small>${new Date(e.date).toLocaleString()}</small>
+  </div>
+  <button class="danger" onclick="deleteExpense(${e.id})">×</button>
+ </div>
+ `).join("");
+}
+
+function addBillItem(){
+ let id=Number(document.getElementById("billProduct").value);
+ let qty=Number(document.getElementById("billQty").value);
+ let price=Number(document.getElementById("billPrice").value);
+
+ let p=products.find(x=>x.id===id);
+
+ if(!p||qty<=0||price<=0){
+  alert("Product, quantity aur price select karein");
+  return;
+ }
+
+ bill.push({
+  product:p.name,
+  qty,
+  price,
+  total:qty*price
+ });
+
+ document.getElementById("billQty").value=1;
+
+ save();
+ renderBill();
+}
+
+function removeBillItem(i){
+ bill.splice(i,1);
+ save();
+ renderBill();
+}
+
+function renderBill(){
+ let name=document.getElementById("billCustomer").value||"Walk-in Customer";
+ document.getElementById("billCustomerShow").textContent=name;
+
+ let tbody=document.getElementById("billItems");
+
+ if(!bill.length){
+  tbody.innerHTML='<tr><td colspan="4" style="text-align:center">No items</td></tr>';
+ }else{
+  tbody.innerHTML=bill.map((x,i)=>`
+  <tr>
+   <td>${escapeHtml(x.product)}</td>
+   <td>${x.qty}</td>
+   <td>${money(x.price)}</td>
+   <td>${money(x.total)}
+   <button class="danger no-print" onclick="removeBillItem(${i})">×</button>
+   </td>
+  </tr>
+  `).join("");
+ }
+
+ let total=bill.reduce((a,x)=>a+x.total,0);
+ document.getElementById("billTotal").textContent=money(total);
+}
+
+document.getElementById("billCustomer").addEventListener("input",renderBill);
+
+function clearBill(){
+ if(confirm("Clear current bill?")){
+  bill=[];
+  save();
+  renderBill();
+ }
+}
+
+function printBill(){
+ if(!bill.length){
+  alert("Bill mein koi item nahi hai");
+  return;
+ }
+ window.print();
+}
+
+function dashboard(){
+ let now=new Date();
+ let today=now.toDateString();
+
+ let todaySales=sales
+  .filter(x=>new Date(x.date).toDateString()===today)
+  .reduce((a,x)=>a+x.total,0);
+
+ let todayExpense=expenses
+  .filter(x=>new Date(x.date).toDateString()===today)
+  .reduce((a,x)=>a+x.amount,0);
+
+ let allSales=sales.reduce((a,x)=>a+x.total,0);
+ let allExpense=expenses.reduce((a,x)=>a+x.amount,0);
+
+ document.getElementById("todaySales").textContent=money(todaySales);
+ document.getElementById("todayExpense").textContent=money(todayExpense);
+ document.getElementById("allSales").textContent=money(allSales);
+ document.getElementById("allExpense").textContent=money(allExpense);
+ document.getElementById("profit").textContent=money(allSales-allExpense);
+}
+
+function backup(){
+ let data={
+  products,
+  sales,
+  expenses,
+  bill,
+  backupDate:new Date().toISOString()
+ };
+
+ let blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"});
+ let a=document.createElement("a");
+ a.href=URL.createObjectURL(blob);
+ a.download="mashabrum-poultry-backup.json";
+ a.click();
+}
+
+function clearData(){
+ if(confirm("WARNING: All app data will be deleted. Continue?")){
+  localStorage.clear();
+  products=[];
+  sales=[];
+  expenses=[];
+  bill=[];
+  render();
+ }
+}
+
+function escapeHtml(text){
+ return String(text)
+ .replaceAll("&","&amp;")
+ .replaceAll("<","&lt;")
+ .replaceAll(">","&gt;")
+ .replaceAll('"',"&quot;")
+ .replaceAll("'","&#039;");
+}
+
+function render(){
+ renderProducts();
+ renderSales();
+ renderExpenses();
+ renderBill();
+ dashboard();
+}
+
+render();
+</script>
+
+</body>
+  </html>
