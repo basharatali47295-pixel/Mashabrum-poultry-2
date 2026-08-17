@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#064b2a"/>
+      <stop offset="100%" stop-color="#0b2418"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="512" height="512" rx="100" fill="url(#bg)"/>
+  <circle cx="256" cy="220" r="165" fill="none" stroke="#D4A72C" stroke-width="14"/>
+
+  <!-- Chicken -->
+  <ellipse cx="270" cy="285" rx="105" ry="125" fill="#f5f1df"/>
+  <circle cx="270" cy="170" r="85" fill="#fffdf4"/>
+
+  <!-- Comb -->
+  <path d="M210 110 C190 65 225 55 245 88 C260 45 290 65 285 100 C320 70 340 105 315 130 Z"
+        fill="#d62828"/>
+
+  <!-- Beak -->
+  <path d="M345 170 L405 195 L345 215 Z" fill="#D4A72C"/>
+
+  <!-- Eye -->
+  <circle cx="315" cy="155" r="13" fill="#141210"/>
+  <circle cx="319" cy="151" r="4" fill="#fff"/>
+
+  <!-- Wattle -->
+  <path d="M330 215 C360 215 365 260 335 270 C310 278 305 235 330 215 Z"
+        fill="#d62828"/>
+
+  <!-- Wing -->
+  <ellipse cx="235" cy="300" rx="65" ry="90" fill="#e5dfcc"/>
+
+  <!-- Ground -->
+  <path d="M90 390 Q256 330 422 390 L422 425 L90 425 Z" fill="#D4A72C"/>
+
+  <!-- Text -->
+  <text x="256" y="465"
+        text-anchor="middle"
+        font-family="Arial, sans-serif"
+        font-size="38"
+        font-weight="bold"
+        fill="#ffffff">MASHABRUM</text>
+</svg>
